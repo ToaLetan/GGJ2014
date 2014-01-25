@@ -4,14 +4,15 @@ using System.Collections;
 public class InputManager
 {
 	public enum MoveDirection { Idle, Up, Down, Left, Right };
-
-	public delegate void InputEvent(MoveDirection movementdir);
+	
+	public delegate void MovementEvent(MoveDirection movementdir);
+	public delegate void InputEvent();
 
 	//Key pressed events
-	public event InputEvent UpKey_Pressed;
-	public event InputEvent DownKey_Pressed;
-	public event InputEvent LeftKey_Pressed;
-	public event InputEvent RightKey_Pressed;
+	public event MovementEvent UpKey_Pressed;
+	public event MovementEvent DownKey_Pressed;
+	public event MovementEvent LeftKey_Pressed;
+	public event MovementEvent RightKey_Pressed;
 	public event InputEvent ActionKey_Pressed;
 
 	//Key released events
@@ -81,27 +82,27 @@ public class InputManager
 		if(Input.GetKey(ActionKey))
 		{
 			if(ActionKey_Pressed != null)
-				ActionKey_Pressed(MoveDirection.Idle);
+				ActionKey_Pressed();
 		}
 
 		//Key released
 		if(!Input.GetKey(UpKey) && !Input.GetKey(DownKey))
 		{
 			if(UpDownKeys_Released != null)
-				UpDownKeys_Released(MoveDirection.Idle);
+				UpDownKeys_Released();
 		}
 
 
 		if(!Input.GetKey(LeftKey) && !Input.GetKey(RightKey))
 		{
 			if(LeftRightKeys_Released != null)
-				LeftRightKeys_Released(MoveDirection.Idle);
+				LeftRightKeys_Released();
 		}
 
 		if(!Input.GetKey(ActionKey))
 		{
 			if(ActionKey_Released != null)
-				ActionKey_Released(MoveDirection.Idle);
+				ActionKey_Released();
 		}
 	}
 }

@@ -21,7 +21,7 @@ public class PlayerScript : MonoBehaviour
 		InputManager.Instance.DownKey_Pressed += PlayerMove;
 		InputManager.Instance.LeftKey_Pressed += PlayerMove;
 		InputManager.Instance.RightKey_Pressed += PlayerMove;
-		//InputManager.Instance.ActionKey_Pressed += ___________;
+		InputManager.Instance.ActionKey_Pressed += PlayerAction;
 
 		InputManager.Instance.UpDownKeys_Released += ApplyDecelerationY;
 		InputManager.Instance.LeftRightKeys_Released += ApplyDecelerationX;
@@ -70,7 +70,7 @@ public class PlayerScript : MonoBehaviour
 		gameObject.transform.position = newPlayerPos;
 	}
 
-	private void ApplyDecelerationX(InputManager.MoveDirection movementdir)
+	private void ApplyDecelerationX()
 	{
 		Vector2 newPlayerPos = gameObject.transform.position;
 
@@ -94,7 +94,7 @@ public class PlayerScript : MonoBehaviour
 		gameObject.transform.position = newPlayerPos;
 	}
 
-	private void ApplyDecelerationY(InputManager.MoveDirection movementdir)
+	private void ApplyDecelerationY()
 	{
 		Vector2 newPlayerPos = gameObject.transform.position;
 		
@@ -114,6 +114,52 @@ public class PlayerScript : MonoBehaviour
 			
 			newPlayerPos.y += currentvelocityY * directionModifier;
 		}
+
+		gameObject.transform.position = newPlayerPos;
+	}
+
+	private void PlayerAction()
+	{
+		//If player is right next to an enemy, do a size comparison.
+		GameObject target = GetClosestEnemy ();
+		if(target != null)
+		{
+			if(gameObject.renderer.bounds.Intersects(target.renderer.bounds))
+			{
+				float playerCombinedSize = gameObject.renderer.bounds.size.x + gameObject.renderer.bounds.size.y + gameObject.renderer.bounds.size.z;
+				float targetCombinedSize = target.renderer.bounds.size.x + target.renderer.bounds.size.y + target.renderer.bounds.size.z;
+
+				//If player is larger than the enemy, consume them. Increase player size.
+				if(playerCombinedSize >= targetCombinedSize)
+				{
+					gameObject.transform.localScale += target.transform.localScale/2;
+					GameObject.Destroy(target);
+				}
+			}
+		}
+
+	}
+
+	private GameObject GetClosestEnemy()
+	{
+			GameObject[] enemyArray = GameObject.FindGameObjectsWithTag ("Enemy");
+			GameObject closestEnemy = null;
+
+			float shortestDist = Mathf.Infinity;
+			float currentDist = 0;
+			
+			for (int i = 0; i < enemyArray.Length; i++) 
+			{
+				currentDist = Vector3.Distance(gameObject.transform.position, enemyArray[i].transform.position);
+
+				if(currentDist < shortestDist)
+				{
+					shortestDist = currentDist;
+					closestEnemy = enemyArray[i];
+				}
+			}
+
+			return closestEnemy;
 	}
 
 }
