@@ -10,14 +10,17 @@ public class EnemyScript : MonoBehaviour
 	private const float MIN_WANDER_RANGE = 1;
 	private const float MOVESPEED = 2;
 	private const float WANDERTIME = 2.5f; //In seconds
+	private const float DAMAGETIME = 2.5f; //In seconds
 
 	private GameObject target = null;
 
 	private Vector2 wanderLocation = Vector2.zero;
 
 	private float wanderTimer = 0;
+	private float damageTimer = 0;
 
 	private bool isWanderTimeRunning = false;
+	private bool isDamageTimerRunning = false;
 
 	// Use this for initialization
 	void Start () 
@@ -39,6 +42,8 @@ public class EnemyScript : MonoBehaviour
 				isWanderTimeRunning = false;
 			}
 		}
+
+		UpdateDamageTimer ();
 
 		UpdateAI ();
 	}
@@ -109,12 +114,27 @@ public class EnemyScript : MonoBehaviour
 		return (combinedEnemySize > combinedTargetSize);
 	}
 
+	private void UpdateDamageTimer()
+	{
+		if (isDamageTimerRunning)
+			damageTimer += Time.deltaTime;
+
+		if (damageTimer >= DAMAGETIME) 
+		{
+			isDamageTimerRunning = false;
+			damageTimer = 0;
+		}
+	}
+
 	public void OnCollisionEnter2D(Collision2D col)
 	{
 		if (col.gameObject.tag == "Player" && IsLargerThanTarget() == true) 
 		{
-			if(col.gameObject.GetComponent<PlayerScript>().hunger > 0)
-				col.gameObject.GetComponent<PlayerScript>().hunger -= 15;
+			if(col.gameObject.GetComponent<PlayerScript>().hunger > 0 && !isWanderTimeRunning)
+			{
+				col.gameObject.GetComponent<PlayerScript>().hunger -= 5;
+				isWanderTimeRunning = true;
+			}
 		}
 	}
 }

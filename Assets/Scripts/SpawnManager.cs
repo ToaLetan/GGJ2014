@@ -75,6 +75,7 @@ public class SpawnManager
 		SpriteRenderer segmentRenderer = null;
 
 		GameObject mob = GameObject.Instantiate(Resources.Load("Prefabs/Mob")) as GameObject;
+		mob.transform.position = GenerateRandLocation ();
 
 		//Get the individual sprite segments of the mob and generate their respective parts.
 		GameObject head = mob.transform.FindChild("Head").gameObject;
@@ -204,6 +205,22 @@ public class SpawnManager
 	private float GenerateRandSize()
 	{
 		return Random.Range(minMobSize, maxMobSize);
+	}
+
+	private Vector3 GenerateRandLocation()
+	{
+		Vector3 newLocation = Vector3.zero;
+
+		float maxX = GameObject.FindGameObjectWithTag ("Background").renderer.bounds.size.x / 2;
+		float maxY = GameObject.FindGameObjectWithTag ("Background").renderer.bounds.size.y / 2;
+
+		float randX = Random.Range (-maxX, maxX);
+		float randY = Random.Range (-maxY, maxY);
+
+		newLocation.x += randX;
+		newLocation.y += randY;
+
+		return newLocation;
 	}
 
 }

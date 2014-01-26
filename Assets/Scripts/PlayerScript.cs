@@ -187,6 +187,8 @@ public class PlayerScript : MonoBehaviour
 						if(hunger < 100)
 							hunger += 10;
 
+						GetRandomMobPart(target);
+
 						gameObject.transform.localScale += target.transform.localScale/8;
 						GameObject.Destroy(target);
 					}
@@ -216,6 +218,44 @@ public class PlayerScript : MonoBehaviour
 			}
 
 			return closestEnemy;
+	}
+
+	private void GetRandomMobPart(GameObject mob)
+	{
+		//Randomize a part on the player
+		//Grab that part from the mob
+
+		Sprite newSegment = null;
+
+		SpriteRenderer segmentRenderer = null;
+
+		string segmentName = "";
+
+		int randSegment = Random.Range (1, 5);
+
+		switch (randSegment) 
+		{
+			case 1:
+			segmentName = "Head";
+				break;
+			case 2:
+			segmentName = "Tail";
+				break;
+			case 3:
+			segmentName = "Back";
+				break;
+			case 4:
+			segmentName = "Limb_Left";
+				break;
+			case 5:
+			segmentName = "Limb_Right";
+				break;
+		}
+		segmentRenderer = gameObject.transform.FindChild(segmentName).gameObject.GetComponent<SpriteRenderer>();
+		newSegment = mob.transform.FindChild (segmentName).gameObject.GetComponent<SpriteRenderer> ().sprite;
+
+		segmentRenderer.sprite = newSegment;
+
 	}
 
 }
