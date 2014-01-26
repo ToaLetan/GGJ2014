@@ -44,7 +44,8 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		survivalTime += Time.deltaTime;
+		if(hunger > 0)
+			survivalTime += Time.deltaTime;
 
 		SpawnManager.Instance.Update();
 		InputManager.Instance.Update();
