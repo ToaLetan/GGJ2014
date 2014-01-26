@@ -36,14 +36,11 @@ public class GameOverScript : MonoBehaviour
 
 	void OnGameOver()
 	{
-		Debug.Log ("GAME OVER");
-
 		for (int i = 0; i < gameOverObjects.Length; i++) 
 		{
 			if(gameOverObjects[i].name == "ResultsText")
 			{
 				gameOverObjects[i].GetComponent<TextMesh> ().text = "You lasted for: " + Mathf.CeilToInt(playerInfo.survivalTime) + " seconds!";
-				Debug.Log(playerInfo.survivalTime);
 			}
 		}
 

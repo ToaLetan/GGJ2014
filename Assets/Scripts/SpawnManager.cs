@@ -39,6 +39,9 @@ public class SpawnManager
 	// Update is called once per frame
 	public void Update ()
 	{
+		if(maxMobsToSpawn != Mathf.CeilToInt(playerStats.gameObject.transform.localScale.x) + 3)
+			maxMobsToSpawn = Mathf.CeilToInt(playerStats.gameObject.transform.localScale.x) + 3;
+
 		UpdateSpawnTimer();
 	}
 

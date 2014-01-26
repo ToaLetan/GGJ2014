@@ -168,7 +168,7 @@ public class PlayerScript : MonoBehaviour
 		//If player is right next to an enemy, do a size comparison.
 		GameObject target = GetClosestEnemy ();
 
-		if(target != null)
+		if(target != null && hunger > 0)
 		{
 			Renderer playerRenderer = gameObject.transform.FindChild("Body").GetComponent<Renderer>();
 			Renderer targetRenderer = target.transform.FindChild("Body").GetComponent<Renderer>();
