@@ -3,8 +3,14 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour 
 {
+	public delegate void PlayerEvent ();
+
+	public event PlayerEvent GameOverEvent;
+
 	private const float MAXVELOCITY = 0.5f;
 	private const float HUNGERTIME = 2.0f;
+
+	public float survivalTime = 0;
 
 	//Exposing player movement variables to be modified at runtime in Unity
 	public float currentvelocityX = 0;
@@ -38,6 +44,8 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		survivalTime += Time.deltaTime;
+
 		SpawnManager.Instance.Update();
 		InputManager.Instance.Update();
 		UpdateHunger();
@@ -45,6 +53,9 @@ public class PlayerScript : MonoBehaviour
 
 	private void UpdateHunger()
 	{
+		if (hunger < 0)
+			hunger = 0;
+
 		if(isHungerTimerRunning)
 		{
 			hungerTimer += Time.deltaTime;
@@ -54,8 +65,13 @@ public class PlayerScript : MonoBehaviour
 				if(hunger > 0)
 					hunger -= 10;
 				else
+				{
 					isHungerTimerRunning = false;
-				//GAME OVER EVENT SHOULD FIRE HERE
+
+					if(GameOverEvent != null)
+						GameOverEvent();
+				}
+
 				hungerTimer = 0;
 			}
 		}
@@ -170,7 +186,7 @@ public class PlayerScript : MonoBehaviour
 						if(hunger < 100)
 							hunger += 10;
 
-						gameObject.transform.localScale += target.transform.localScale/2;
+						gameObject.transform.localScale += target.transform.localScale/8;
 						GameObject.Destroy(target);
 					}
 				}

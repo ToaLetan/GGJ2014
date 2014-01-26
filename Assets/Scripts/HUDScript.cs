@@ -29,7 +29,7 @@ public class HUDScript : MonoBehaviour
 		int hunger = player.GetComponent<PlayerScript>().hunger;
 
 		Vector3 newBarSize = hungerFill.transform.localScale;
-		newBarSize.x = hunger * 0.1f;
+		newBarSize.x = hunger * 0.05f;
 
 		hungerFill.transform.localScale = newBarSize;
 	}

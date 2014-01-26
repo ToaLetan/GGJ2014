@@ -109,8 +109,12 @@ public class EnemyScript : MonoBehaviour
 		return (combinedEnemySize > combinedTargetSize);
 	}
 
-	/*private GameObject GetClosestTarget()
+	public void OnCollisionEnter2D(Collision2D col)
 	{
-		//[CONTINGENCY] Get Player location
-	}*/
+		if (col.gameObject.tag == "Player" && IsLargerThanTarget() == true) 
+		{
+			if(col.gameObject.GetComponent<PlayerScript>().hunger > 0)
+				col.gameObject.GetComponent<PlayerScript>().hunger -= 15;
+		}
+	}
 }
