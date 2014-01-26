@@ -23,7 +23,7 @@ public class EnemyScript : MonoBehaviour
 	void Start () 
 	{
 		target = GameObject.FindGameObjectWithTag ("Player") as GameObject;
-		maxDetectionRange += (gameObject.renderer.bounds.size.x + gameObject.renderer.bounds.size.y)/1.5f;
+		maxDetectionRange += (gameObject.GetComponentInChildren<Renderer>().bounds.size.x + gameObject.GetComponentInChildren<Renderer>().bounds.size.y)/1.5f;
 	}
 	
 	// Update is called once per frame
@@ -46,7 +46,6 @@ public class EnemyScript : MonoBehaviour
 	private void UpdateAI()
 	{
 		Vector3 newPos = gameObject.transform.position;
-		int directionModifier = 0;
 
 		//If the target is in range, move towards them.
 		//Otherwise, wander.
@@ -101,8 +100,11 @@ public class EnemyScript : MonoBehaviour
 
 	private bool IsLargerThanTarget()
 	{
-		float combinedEnemySize = gameObject.renderer.bounds.size.x + gameObject.renderer.bounds.size.y + gameObject.renderer.bounds.size.z;
-		float combinedTargetSize = target.renderer.bounds.size.x + target.renderer.bounds.size.y + target.renderer.bounds.size.z;
+		float combinedEnemySize = gameObject.GetComponentInChildren<Renderer>().bounds.size.x + gameObject.GetComponentInChildren<Renderer>().bounds.size.y + gameObject.GetComponentInChildren<Renderer>().bounds.size.z;
+
+		Renderer targetRenderer = target.GetComponentInChildren<Renderer>();
+		
+		float combinedTargetSize = targetRenderer.bounds.size.x + targetRenderer.bounds.size.y + targetRenderer.bounds.size.z;
 
 		return (combinedEnemySize > combinedTargetSize);
 	}

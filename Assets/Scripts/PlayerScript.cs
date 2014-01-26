@@ -4,12 +4,18 @@ using System.Collections;
 public class PlayerScript : MonoBehaviour 
 {
 	private const float MAXVELOCITY = 0.5f;
+	private const float HUNGERTIME = 2.0f;
 
 	//Exposing player movement variables to be modified at runtime in Unity
 	public float currentvelocityX = 0;
 	public float currentvelocityY = 0;
 	public float acceleration = 2;
 	public float deceleration = 2;
+
+	public int hunger = 100;
+	private float hungerTimer = 0;
+
+	private bool isHungerTimerRunning = true;
 
 	private InputManager.MoveDirection currentDirection = InputManager.MoveDirection.Idle;
 
@@ -25,12 +31,34 @@ public class PlayerScript : MonoBehaviour
 
 		InputManager.Instance.UpDownKeys_Released += ApplyDecelerationY;
 		InputManager.Instance.LeftRightKeys_Released += ApplyDecelerationX;
+
+		SpawnManager.Instance.AssembleMob();
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
+		SpawnManager.Instance.Update();
 		InputManager.Instance.Update();
+		UpdateHunger();
+	}
+
+	private void UpdateHunger()
+	{
+		if(isHungerTimerRunning)
+		{
+			hungerTimer += Time.deltaTime;
+
+			if(hungerTimer >= HUNGERTIME)
+			{
+				if(hunger > 0)
+					hunger -= 10;
+				else
+					isHungerTimerRunning = false;
+				//GAME OVER EVENT SHOULD FIRE HERE
+				hungerTimer = 0;
+			}
+		}
 	}
 
 	private void PlayerMove(InputManager.MoveDirection movementdir)
@@ -122,18 +150,29 @@ public class PlayerScript : MonoBehaviour
 	{
 		//If player is right next to an enemy, do a size comparison.
 		GameObject target = GetClosestEnemy ();
+
 		if(target != null)
 		{
-			if(gameObject.renderer.bounds.Intersects(target.renderer.bounds))
-			{
-				float playerCombinedSize = gameObject.renderer.bounds.size.x + gameObject.renderer.bounds.size.y + gameObject.renderer.bounds.size.z;
-				float targetCombinedSize = target.renderer.bounds.size.x + target.renderer.bounds.size.y + target.renderer.bounds.size.z;
+			Renderer playerRenderer = gameObject.transform.FindChild("Body").GetComponent<Renderer>();
+			Renderer targetRenderer = target.transform.FindChild("Body").GetComponent<Renderer>();
 
-				//If player is larger than the enemy, consume them. Increase player size.
-				if(playerCombinedSize >= targetCombinedSize)
+			if(playerRenderer != null && targetRenderer != null)
+			{
+				if(playerRenderer.bounds.Intersects(targetRenderer.bounds))
 				{
-					gameObject.transform.localScale += target.transform.localScale/2;
-					GameObject.Destroy(target);
+					float playerCombinedSize = playerRenderer.bounds.size.x + playerRenderer.bounds.size.y + playerRenderer.bounds.size.z;
+					float targetCombinedSize = targetRenderer.bounds.size.x + targetRenderer.bounds.size.y + targetRenderer.bounds.size.z;
+
+					//If player is larger than the enemy, consume them. Don't consume enemies if at max hunger. Increase player size.
+					if(playerCombinedSize >= targetCombinedSize && hunger < 100)
+					{
+						//Replenish hunger
+						if(hunger < 100)
+							hunger += 10;
+
+						gameObject.transform.localScale += target.transform.localScale/2;
+						GameObject.Destroy(target);
+					}
 				}
 			}
 		}
