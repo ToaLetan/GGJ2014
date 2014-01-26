@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour 
 {
-	private const float MAXVELOCITY = 1;
+	private const float MAXVELOCITY = 0.5f;
 
 	//Exposing player movement variables to be modified at runtime in Unity
 	public float currentvelocityX = 0;
